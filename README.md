@@ -60,6 +60,15 @@ ggplot(all[all$origin == "ont" & all$reads != 1000001,] , aes(ratio, fill = orig
 ggplot(all[all$origin == "hifi" & all$reads != 1000001,] , aes(ratio, fill = origin)) + geom_histogram(binwidth =1)
 ```
 
-If the genome contains all the repeated kmers of the reads the histogram should look like : [!(https://user-images.githubusercontent.com/4004727/118785312-0b0b7100-b891-11eb-95ce-d16c30d61c64.png)]
+If the genome contains all the repeated kmers of the reads the histogram should look like :
 
+![HiFi image](https://github.com/chklopp/GARK/blob/feaeedc946eecbaf82b5511be213f24a528b5fbd/HiFi.png)
+
+This is the ONT histogram 
+
+![ONT image](https://github.com/chklopp/GARK/blob/feaeedc946eecbaf82b5511be213f24a528b5fbd/ONT.png)
+
+The ONT histogram shows kmers having ratios out of the awaited coverage. Right hand kmers are more present in the reads than in the genome and left hand kmers are more present in the genome than in the reads. 
+
+ONT repeated kmer are less abundant the HiFi repeated kmers hinting at kmer which are not seen as repeated in ONT because they are very lowly present in the genome. 
 

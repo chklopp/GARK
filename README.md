@@ -3,19 +3,19 @@ Check genome assembly repeat content using kmers
 
 It is now common to compare genome assembly and read kmer content to verify assembly completness with kat comp (fig 1. of https://www.biorxiv.org/content/10.1101/064733v2.full.pdf). This gives a quick overview of missing kmers in the homozygote or heterozygote sections of the genome. 
 
-Hereunder I present an extension of this analysis for repeated parts of the genome. The idea emerged while comparing ONT and PacBio HiFi assemblies. HiFi assemblies where larger than ONT assemblies with close to the same busco scores. HiFi assembly lengths were also closer to the expected genome size infered from kmer content using genomescope2 (http://qb.cshl.edu/genomescope/genomescope2.0/). 
+Hereunder we present an extension of this analysis for repeated parts of the genome. The idea emerged while comparing ONT and PacBio HiFi assemblies. HiFi assemblies were larger than ONT assemblies with close to the same busco score. HiFi assembly lengths were also closer to the expected genome size infered from kmer content using genomescope2 (http://qb.cshl.edu/genomescope/genomescope2.0/). 
 
 kat comp compares kmer counts in the genome versus in the reads. Zero counts correspond to kmers missing in the genome but present in the reads. In a haploid genome assembly, counts of 1 correspond to homozygous or heterozogous sections. In a diploid genome assembly, kmer counts of 1 correspond to heterozygous sections and counts of 2 to homozygous sections. Counts above 2 correspond to section which are several times in the genome and can arise due to polyploidy or non resolved ancient duplications or recent duplications or local duplications. 
 
-For repeats, the idea is first to threshold kmers from the genome. We could for example decide that we call a repeated kmer a kmer present at least 50 times in the genome. Then in the reads this kmer should be 50 * coverage (homozygous coverage peak of genomescope2) time in the reads. If this is the case the ration (read kmer count)/(genome kmer count) should be equal to the coverage for all repeated kmers. Kmers having a ratio far from the expected coverage show repeat collapse or expension events in the genome compared to the reads. 
+For repeats, the idea is first to threshold genome kmers. We could for example decide that we call a "repeated kmer" a kmer present at least 50 times in the genome. Then in the reads this kmer should be present 50 * coverage (homozygous coverage peak of genomescope2) times. If this is the case the ratio (read kmer count)/(genome kmer count) should be equal to the coverage for all repeated kmers. Kmers having a ratio far from the expected coverage show repeat collapse or expension events in the genome compared to the reads. 
 
 The procedure chains seven steps :
 - setting the genome kmer count threshold
 - calculating the read kmer count threshold
 - creating a kmer database from the genome with kmc using the thresold
 - creating a kmer database from the reads with kmc using the thresold
-- comparing both databases and creating an inserction database
-- extraction the counts from the genome and the reads for the intersecting kmer and calculating the ratio
+- comparing both databases and creating an instersection database
+- extraction the counts from genome and reads for intersecting kmers and calculating the ratio
 - ploting the ratio histogram 
 
 We are going to compare two genome assemblies performed with ONT and HiFi reads with the HiFi reads.
@@ -47,6 +47,7 @@ join -1 1 -2 1 common_hifi_read_hifi_genome.k21.txt.sort hifi_read.k21.txt.sort 
 ```
 
 Once you have the ratio files you can load them into R and produce the plots.
+
 ```
 library(ggplot2)
 hifi <- read.table("common_hifi_read_hifi_genome.k21.txt.sort.ratio")
@@ -64,11 +65,11 @@ If the genome contains all the repeated kmers of the reads the histogram should 
 
 ![HiFi image](https://github.com/chklopp/GARK/blob/feaeedc946eecbaf82b5511be213f24a528b5fbd/HiFi.png)
 
-This is the ONT histogram 
+This is the ONT histogram :
 
 ![ONT image](https://github.com/chklopp/GARK/blob/feaeedc946eecbaf82b5511be213f24a528b5fbd/ONT.png)
 
-The ONT histogram shows kmers having ratios out of the awaited coverage. Right hand kmers are more present in the reads than in the genome and left hand kmers are more present in the genome than in the reads. 
+The ONT histogram shows kmers having ratios out of the awaited coverage. Right hand kmers are more present in the reads than in the genome (repeat compression) and left hand kmers are more present in the genome than in the reads (repeat expension). 
 
-ONT repeated kmer are less abundant the HiFi repeated kmers hinting at kmer which are not seen as repeated in ONT because they are very lowly present in the genome. 
+ONT repeated kmers are less abundant than HiFi repeated kmers hinting at kmers which are not seen as repeated in ONT because they are very lowly present in the genome. 
 
